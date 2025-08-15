@@ -1,0 +1,29 @@
+# FROM: defines the base image to build from
+FROM eclipse-temurin:17-jdk
+
+# ARG: a variable available only during the build process
+ARG JAR_NAME=spring-petclinic.jar
+
+# ENV: a variable available inside the container at runtime
+ENV APP_HOME=/app
+
+# WORKDIR: sets the default working directory for subsequent instructions
+WORKDIR $APP_HOME
+
+# ADD: like COPY but can also extract tar archives or download from URLs
+#ADD . $APP_HOME
+
+# COPY: copies files from the host machine to the container
+COPY . $APP_HOME
+
+# RUN: executes a command during the build process
+# Here we package the Spring Petclinic app and rename the jar file
+RUN ./mvnw package -DskipTests && \
+    cp target/spring-petclinic-*.jar $JAR_NAME
+
+# ENTRYPOINT: defines the main command to run when the container starts
+ENTRYPOINT ["java", "-jar"]
+
+# CMD: provides default arguments to the ENTRYPOINT
+# Can be overridden when running the container
+CMD ["spring-petclinic.jar"]
